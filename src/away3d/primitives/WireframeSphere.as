@@ -99,5 +99,28 @@
 				}
 			}
 		}
+		
+		/**
+		 * The number of segments that make up the plane along the X-axis.
+		 */
+		public function get segmentsW() : int
+		{
+			return _segmentsW;
+		}
+		//TODO: implement get segmentsW
+		
+		/**
+		 * The number of segments that make up the plane along the Y-axis.
+		 */
+		public function get segmentsH() : int
+		{
+			return _segmentsH;
+		}
+		//TODO: implement get segmentsH
+		
+		public function get radius():Number
+		{
+			return _radius;
+		}
 	}
 }

@@ -27,7 +27,7 @@
 		{
 			// TODO: not yet used: for CurveSegment support
 			anchor=null;
-
+			// TODO: this is an odd behaviour: thickness provided by object API will be half the value passed in.
 			_thickness = thickness *.5;
 			// TODO: add support for curve using anchor v1
 			// Prefer removing v1 from this, and make Curve a separate class extending Segment? (- David)

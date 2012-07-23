@@ -1,170 +1,98 @@
 package away3d.tools.serialize
 {
-	import away3d.arcane;
-	import away3d.core.math.Quaternion;
-
-	import flash.geom.Vector3D;
-
-	use namespace arcane;
-
-	/**
-	 * TraceSerializer is a concrete Serializer that will output its results to trace().  It has user settable tabSize and separator vars.
-	 * 
-	 * @see away3d.tools.serialize.Serialize
-	 */
-	public class TraceSerializer extends SerializerBase
+	import away3d.core.base.Object3D;
+	
+	public class TraceSerializer implements ISerializer
 	{
-		private var _indent:uint = 0;
-		public var separator:String = ": ";
-		public var tabSize:uint = 2;
-		
-		/**
-		 * Creates a new TraceSerializer object.
-		 */
 		public function TraceSerializer()
 		{
-			super();
 		}
 		
-		/**
-		 * @inheritDoc
-		 */
-		public override function beginObject(className:String, instanceName:String):void
+		public function export(object3d:Object3D):String
 		{
-			writeString(className, instanceName);
-			_indent += tabSize;
-		}
-		
-    /**
-		 * @inheritDoc
-     */
-    public override function writeInt(name:String, value:int):void
-    {
-      var outputString:String = _indentString();
-      outputString += name;
-      outputString += separator;
-      outputString += value;
-      trace(outputString);
-    }
-    
-		/**
-		 * @inheritDoc
-		 */
-		public override function writeUint(name:String, value:uint):void
-		{
-			var outputString:String = _indentString();
-			outputString += name;
-			outputString += separator;
-			outputString += value;
-			trace(outputString);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		public override function writeBoolean(name:String, value:Boolean):void
-		{
-			var outputString:String = _indentString();
-			outputString += name;
-			outputString += separator;
-			outputString += value;
-			trace(outputString);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		public override function writeString(name:String, value:String):void
-		{
-			var outputString:String = _indentString();
-			outputString += name;
-			if (value)
+			SceneParser.parse(object3d);
+			
+			var containers:Array 	= SceneParser.containers;
+			var meshes:Array		= SceneParser.meshes;
+			var wireframes:Array	= SceneParser.wireframes;
+			var segmentSets:Array	= SceneParser.segmentSets;
+			var segments:Array		= SceneParser.segments;
+			var geometries:Array 	= SceneParser.geometries;
+			var materials:Array 	= SceneParser.materials;
+			var cameras:Array		= SceneParser.cameras;
+			var lights:Array		= SceneParser.lights;
+			var messages:Array		= SceneParser.messages;
+			var numSegmentSets:uint = SceneParser.numSegmentSets;
+			
+			var str:String = "";
+			
+			// Write messages
+			if ( messages.length > 0 )
 			{
-				outputString += separator;
-				outputString += value;
-			}
-			trace(outputString);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		public override function writeVector3D(name:String, value:Vector3D):void
-		{
-			var outputString:String = _indentString();
-			outputString += name;
-			if (value)
-			{
-				outputString += separator;
-				outputString += value;
-			}
-			trace(outputString);
-		}
-
-		/**
-		 * @inheritDoc
-		 */
-		public override function writeTransform(name:String, value:Vector.<Number>):void
-		{
-			var outputString:String = _indentString();
-			outputString += name;
-			if (value)
-			{
-				outputString += separator;
-				
-				var matrixIndent:uint = outputString.length;
-				
-				for (var i:uint = 0; i < value.length; i++)
+				for ( var i:uint = 0; i < messages.length; i ++ )
 				{
-					outputString += value[i];
-					if ((i < (value.length - 1)) && (((i + 1) % 4) == 0))
-					{
-						outputString += "\n";
-						for (var j:uint = 0; j < matrixIndent; j++)
-						{
-							outputString += " ";
-						}
-					}
-					else
-					{
-						outputString += " ";
-					}
+					var msg:String = messages[i];
+					str += "// "+msg+"\n";;
 				}
 			}
-			trace(outputString);
+			
+			str += writeObjects("Geometries", geometries);
+			str += writeObjects("Materials", materials);
+			str += writeObjects("Segments", segments);
+			str += writeObjects("Containers", containers);
+			str += writeObjects("Lights", lights);
+			str += writeObjects("Cameras", cameras);
+			str += writeObjects("Wireframes", wireframes);
+			str += writeObjects("SegmentSets", segmentSets);
+			str += writeObjects("Meshes", meshes);
+			
+			return str;
 		}
 		
-		/**
-		 * @inheritDoc
-		 */
-		public override function writeQuaternion(name:String, value:Quaternion):void
+		private function writeObjects(title:String, array:Array):String
 		{
-			var outputString:String = _indentString();
-			outputString += name;
-			if (value)
+			var str:String = "";
+			
+			if ( array.length > 0 )
 			{
-				outputString += separator;
-				outputString += value;
+				str += newLine("// "+title, 0);
+				
+				for ( var i:uint = 0; i < array.length; i ++ )
+				{
+					var obj:SerializedObject = array[i];
+					str += obj.toString();
+					
+					if (i != array.length - 1) {
+						str += newLine();
+					}
+				}
+				
+				str += newLine();
 			}
-			trace(outputString);
-		}
-
-		/**
-		 * @inheritDoc
-		 */
-		public override function endObject():void
-		{
-			_indent -= tabSize;			
+			
+			return str;
 		}
 		
-		private function _indentString():String
+		private function newLine(value:String = "", numTabs:uint = 0):String
 		{
-			var indentString:String = "";
-			for (var i:uint = 0; i < _indent; i++)
+			var str:String = "\n";
+			
+			for ( var i:uint = 0; i < numTabs; i ++ )
 			{
-				indentString += " ";
+				str += "\t";
 			}
-			return indentString;
-		}
+			
+			str += value;
+			
+			return str;
+		}		
 	}
 }
+
+
+
+
+
+
+
+

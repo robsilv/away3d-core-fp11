@@ -13,8 +13,8 @@
 	import away3d.materials.SegmentMaterial;
 	import away3d.primitives.LineSegment;
 	import away3d.primitives.data.Segment;
+	
 	import flash.display3D.Context3D;
-
 	import flash.display3D.IndexBuffer3D;
 	import flash.display3D.VertexBuffer3D;
 	import flash.geom.Matrix;
@@ -323,6 +323,11 @@
 		public function get secondaryUVBufferOffset() : int
 		{
 			return 0;
+		}
+		
+		public function get lineCount():uint
+		{
+			return _lineCount;
 		}
 	}
 }

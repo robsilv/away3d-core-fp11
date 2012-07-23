@@ -130,5 +130,17 @@ package away3d.primitives
 			_height = value;
 			invalidateGeometry();
 		}
+		
+		public function get segmentsW():uint
+		{
+			return _segmentsW;
+		}
+		//TODO: implement set segmentsW
+		
+		public function get segmentsH():uint
+		{
+			return _segmentsH;
+		}
+		//TODO: implement set segmentsH
 	}
 }

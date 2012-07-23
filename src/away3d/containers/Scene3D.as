@@ -5,7 +5,7 @@ package away3d.containers
 	import away3d.core.partition.Partition3D;
 	import away3d.core.traverse.PartitionTraverser;
 	import away3d.entities.Entity;
-
+	
 	import flash.events.EventDispatcher;
 
 	use namespace arcane;
@@ -162,6 +162,11 @@ package away3d.containers
 		{
 			if (_partitions.indexOf(partition) == -1)
 				_partitions.push(partition);
+		}
+		
+		public function get sceneGraphRoot():ObjectContainer3D
+		{
+			return _sceneGraphRoot;
 		}
 	}
 }
